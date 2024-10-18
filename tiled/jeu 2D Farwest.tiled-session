@@ -1,0 +1,117 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Farwest Level 01.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "B-C-D-E_Serene_Village_01.tsx": {
+            "scaleInDock": 1
+        },
+        "Background_01.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Background_02.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Farwest Level 01.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 2,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 2967.25,
+                "y": 515.25
+            }
+        },
+        "Ground_02.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Ground_04.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Ground_08.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Ground_10.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Ground_11.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Jeu2D Level01.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4799.333333333333,
+                "y": 320
+            }
+        },
+        "Jeu2D Serene_Village_32x32.tsx": {
+            "scaleInDock": 1
+        },
+        "Level01.tmx": {
+            "scale": 0.5118124999999999,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 380.9989009647088,
+                "y": 799.1207717670047
+            }
+        },
+        "Serene_Village_32x32.tsx": {
+            "scaleInDock": 1
+        },
+        "Wall_C_02.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "D:/Python Projects/Tutos Python/Pygame/tiled/farwest/Building",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 60,
+    "openFiles": [
+        "Farwest Level 01.tmx",
+        "Background_01.tsx",
+        "Background_02.tsx",
+        "Ground_02.tsx",
+        "Ground_11.tsx",
+        "Ground_10.tsx",
+        "Jeu2D Level01.tmx",
+        "Level01.tmx",
+        "Ground_04.tsx",
+        "Ground_08.tsx",
+        "Wall_C_02.tsx"
+    ],
+    "project": "jeu 2D Farwest.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "Wall_C_02.tsx",
+        "Ground_08.tsx",
+        "Ground_04.tsx",
+        "Level01.tmx",
+        "Jeu2D Level01.tmx",
+        "Ground_10.tsx",
+        "Ground_11.tsx",
+        "Ground_02.tsx",
+        "Background_02.tsx",
+        "Background_01.tsx",
+        "Farwest Level 01.tmx"
+    ],
+    "resizeMap.removeObjects": false,
+    "tileset.lastUsedFormat": "tsx"
+}

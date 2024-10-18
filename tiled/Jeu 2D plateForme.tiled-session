@@ -1,0 +1,48 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Jeu2D Level01.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Jeu2D Level01.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2942,
+                "y": 315.5
+            }
+        },
+        "Jeu2D Level02.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 4787.333333333333,
+                "y": 365.16666666666663
+            }
+        },
+        "Jeu2D Serene_Village_32x32.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "D:/Python Projects/Tutos Python/Pygame/tiled/images",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 300,
+    "openFiles": [
+        "Jeu2D Level01.tmx",
+        "Jeu2D Serene_Village_32x32.tsx",
+        "Jeu2D Level02.tmx"
+    ],
+    "project": "Jeu 2D plateForme.tiled-project",
+    "property.type": "float",
+    "recentFiles": [
+        "Jeu2D Level02.tmx",
+        "Jeu2D Serene_Village_32x32.tsx",
+        "Jeu2D Level01.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
