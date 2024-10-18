@@ -213,9 +213,7 @@ class Shape(pygame.sprite.Sprite):
             return False
 
     def isJumpOnIt(self, collider):
-        print(collider.getGuidance()[1])
         if collider.getGuidance()[1] < 0 :
-            print("saute dessus")
             return True
         else:
             return False
