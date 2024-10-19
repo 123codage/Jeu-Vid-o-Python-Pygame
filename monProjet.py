@@ -50,7 +50,7 @@ class MyGame(Game2D):
                           "LEFT" : ["SF-course_beton-2.mp3"],
                           "RIGHT" : ["SF-course_beton-2.mp3"]}
 
-        animation = Animation(ANIMATIONS_PLAYER, "images/player", delay=5, soundAnimation = SOUNDS_PLAYER, soundPath = "Sounds")
+        animation = Animation(ANIMATIONS_PLAYER, "images/player", delay=5, soundAnimation = SOUNDS_PLAYER, soundPath = "sounds")
 
         # Affextation de l'animation au joueur
         player.loadAnimations(animation, "IDLE", 15, 40)
@@ -67,7 +67,7 @@ class MyGame(Game2D):
         SOUNDS_TOKEN = { "DEAD" : ["hit_12.wav"]}
 
         # création de l'animation du jeton
-        animationToken = Animation(ANIMATIONS_TOKEN, "images/token", (64, 64), delay=1, soundAnimation = SOUNDS_TOKEN, soundPath = "Sounds")
+        animationToken = Animation(ANIMATIONS_TOKEN, "images/token", (64, 64), delay=1, soundAnimation = SOUNDS_TOKEN, soundPath = "sounds")
         # création d'un token et affectation de son animation
         token = Circle(50, 50, 30, (255, 255, 0))
         token.loadAnimations(animationToken, "WAIT")
@@ -76,11 +76,13 @@ class MyGame(Game2D):
     def generateMonster(self):
 
         ANIMATIONS_MONSTER = {
-            "DEAD": ["Pink_Monster_Idle_4.png:4:H"],
+            "DEAD": ["Pink_Monster_Dead_4.png:4:H"],
             "WALK": ["Pink_Monster_Walk_6.png:6:H"],
         }
 
-        animationMonster = Animation(ANIMATIONS_MONSTER, "images/Monsters", (32, 32), delay=1)
+        SOUNDS_MONSTER = { "DEAD" : ["sf_defenestration_01.mp3"]}
+
+        animationMonster = Animation(ANIMATIONS_MONSTER, "images/Monsters", (32, 32), delay=1, soundAnimation = SOUNDS_MONSTER, soundPath = "Sounds")
 
         monster = Shape(300, 750, 32, 32, Color.RED)
         monster.loadAnimations(animationMonster, "WALK", 0, 0)
@@ -207,8 +209,8 @@ class MyGame(Game2D):
         # Génération des jetons
         token = self.generateToken()
         # générateur de topkens
-        tokens = EntitiesManager(token, 10, 100, 150, Game2D.SIZE[0], Game2D.SIZE[1]-300)
-        #tokens = EntitiesManager(token, ((120,300),(400,200),(800,100),(1100,210)))
+        #tokens = EntitiesManager(token, 10, 100, 150, Game2D.SIZE[0], Game2D.SIZE[1]-300)
+        tokens = EntitiesManager(token, ((120,300),(400,200),(800,100),(1100,210)))
         tokens.goToTarget([0,100],10)
 
 

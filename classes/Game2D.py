@@ -240,7 +240,8 @@ class EntitiesManager:
                     self.entitiesGroup.append(new)
 
             if isinstance(pointsList, tuple) or isinstance(pointsList, list):
-                if len(pointsList) > 2 :
+                if len(pointsList) > 1 :
+                    for point in pointsList:
                         new = entity.copy(point[0], point[1])
                         self.entitiesGroup.append(new)
                 else:
@@ -534,12 +535,14 @@ class Gravity:
                         if (floorTouched.resistance / 10) < self.gravity:
                             collider.speed += self.gravity - (floorTouched.resistance / 10)
                             collider.rect.y += collider.speed
+                            collider.setGuidance([collider.getGuidance()[0],1])
                         else:
                             collider.rect.y = floorTouched.rect.y - collider.height + 1
                             break
                     else :
                         collider.speed += self.gravity
                         collider.rect.y += collider.speed
+                        collider.setGuidance([collider.getGuidance()[0],1])
 
             for collider in self.collidersGroup:
                 if not (collider in self.collidersFloor):
@@ -563,6 +566,7 @@ class Gravity:
                              ((collider.rect.y + collider.height) < (floorTouched.rect.y + floorTouched.height))):
                             collider.speed += self.gravity - (floorTouched.resistance / 10)
                             collider.rect.y += collider.speed
+                            collider.setGuidance([collider.getGuidance()[0],1])
                             collider.setStick(True)
                         else:
                             if (floorTouched.rect.y - (collider.rect.y + collider.height)) < 0:
@@ -570,6 +574,7 @@ class Gravity:
                                 if (collider.rect.y - floorTouched.rect.y) > collider.height:
                                     collider.speed += self.gravity
                                     collider.rect.y += collider.speed
+                                    collider.setGuidance([collider.getGuidance()[0],1])
                                 else:
                                     collider.speed = 0
                                     collider.rect.y = (floorTouched.rect.y -
@@ -578,6 +583,7 @@ class Gravity:
                     else :
                         collider.speed += self.gravity
                         collider.rect.y += collider.speed
+                        collider.setGuidance([collider.getGuidance()[0],1])
 
 class Game2D:
 
