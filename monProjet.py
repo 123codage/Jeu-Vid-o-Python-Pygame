@@ -50,9 +50,10 @@ class MyGame(Game2D):
                           "LEFT" : ["SF-course_beton-2.mp3"],
                           "RIGHT" : ["SF-course_beton-2.mp3"]}
 
+        # Définition de l'animation
         animation = Animation(ANIMATIONS_PLAYER, "images/player", (100, 200),  scale=0.5, delay=5, soundAnimation = SOUNDS_PLAYER, soundPath = "sounds")
 
-        # Affextation de l'animation au joueur
+        # Affectation de l'animation au joueur
         player.loadAnimations(animation, "IDLE", 20, 80)
 
 
