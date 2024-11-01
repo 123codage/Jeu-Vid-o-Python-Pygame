@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import SRCALPHA
-from .common import Color, Shape, Image, ShapeImage
+from .common import *
 import time
 from classes.levelsTiled import Levels_2D
 import copy
@@ -63,12 +63,10 @@ class Animation(pygame.sprite.Sprite):
     currentAnimation = None
     soundAnimation = None
 
-    def __init__(self, animationGroup, path=None, size=(40, 60), delay=10, soundAnimation = None, soundPath = None):
+    def __init__(self, animationGroup, path=None, size=(40, 60), scale=1, delay=10, soundAnimation = None, soundPath = None):
         super().__init__()
 
         try:
-
-            scale_image = 1
 
             self.animationGroup = animationGroup
             # Chargement des images
@@ -89,19 +87,34 @@ class Animation(pygame.sprite.Sprite):
                             nbr_decoupage = int(vignette)
                         if index_vignette == 2 :
                             sens_decoupage = vignette
+                    if sens_decoupage == "H":
+                        #image = Image.load(path, imageName, (size[0] * nbr_decoupage , size[1]))
+                        image = Image.load(path, imageName)
 
-                    image = Image.load(path, imageName, (size[0] * nbr_decoupage , size[1]))
+                        for col in range(0, nbr_decoupage):
+                            # Définir la position de la sous-image
+                            rect = pygame.Rect(col * size[0], 0, size[0], size[1])
+                            # Découper la sous-image
+                            sub_image = image.subsurface(rect)
+                            # Ajouter la sous-image à la liste
+                            if scale != 1:
+                                sub_image = pygame.transform.scale(sub_image, (size[0]*scale, size[1]*scale))
+                            # sub_image = pygame.transform.flip(sub_image, True, False)
+                            new_animations.append(sub_image)
 
-                    for col in range(0, nbr_decoupage):
-                        # Définir la position de la sous-image
-                        rect = pygame.Rect(col * size[0], 0, size[0], size[1])
-                        # Découper la sous-image
-                        sub_image = image.subsurface(rect)
-                        # Ajouter la sous-image à la liste
-                        if scale_image != 1:
-                            sub_image = pygame.transform.scale(sub_image, (size[0]*scale_image, size[1]*scale_image))
-                        # sub_image = pygame.transform.flip(sub_image, True, False)
-                        new_animations.append(sub_image)
+                    elif sens_decoupage == "V":
+                        image = Image.load(path, imageName, (size[0], size[1] * nbr_decoupage))
+
+                        for row in range(0, nbr_decoupage):
+                            # Définir la position de la sous-image
+                            rect = pygame.Rect(0, row * size[1], size[0], size[1])
+                            # Découper la sous-image
+                            sub_image = image.subsurface(rect)
+                            # Ajouter la sous-image à la liste
+                            if scale != 1:
+                                sub_image = pygame.transform.scale(sub_image, (size[0]*scale, size[1]*scale))
+                            # sub_image = pygame.transform.flip(sub_image, True, False)
+                            new_animations.append(sub_image)
 
                 self.animationGroup[name] = new_animations
 
@@ -168,9 +181,9 @@ class Animation(pygame.sprite.Sprite):
             self.currentAnimation = animation
             self.index = 0
             self.last_tick = pygame.time.get_ticks()
-            if shift_x > 0 :
+            if shift_x != 0 :
                 self.shift_x = shift_x
-            if shift_y > 0 :
+            if shift_y != 0 :
                 self.shift_y = shift_y
 
             # Animation du joueur en fonction de sa direction
@@ -283,10 +296,10 @@ class EntitiesManager:
         self.entitiesGroup = [entity for entity in self.entitiesGroup if entity != entity_deleted]
 
 
-    def goToTarget(self, target, velocity = 10):
+    def moveToTarget(self, target, velocity = 10):
 
         for entity in self.entitiesGroup:
-            entity.goToTarget(target, velocity)
+            entity.moveToTarget(target, velocity)
 
 
 class Player(Shape):
@@ -328,6 +341,15 @@ class Player(Shape):
                     self.speed_moving = Event.VELOCITY_MAX
             else:
                 self.speed_moving = Event.VELOCITY
+
+            if guidance[1] > 0:
+                if not(self.isStick()):
+                    self.guidance[1] = guidance[1]
+                    self.state = "DOWN"
+                    self.rect.y = self.rect.y + guidance[1]
+                else:
+                    self.state = "IDLE"
+
             if guidance[0] > 0:
                 self.state = "RIGHT"
                 self.guidance[0] = guidance[0]
@@ -341,10 +363,7 @@ class Player(Shape):
                 self.rect.x = self.rect.x + (self.speed_moving * guidance[0])
                 if self.rect.x - self.width < 0 :
                     self.rect.x = 1 - self.width
-            if guidance[1] > 0:
-                self.state = "DOWN"
-                self.guidance[1] = guidance[1]
-                self.rect.y = self.rect.y + guidance[1]
+
             if guidance[1] < 0 and self.isStick():
                 #if self.guidance[1] == 0:
                 self.state = "UP"
@@ -379,6 +398,15 @@ class Player(Shape):
 
             if self.animations :
                 self.animations.draw(screen, self.rect.x, self.rect.y)
+                if DEBUG.active:
+                    self.surface.convert_alpha()
+                    self.surface.set_alpha(DEBUG.alpha)
+                    self.surface.fill(DEBUG.color)
+
+                    screen.blit(self.surface,
+                            (self.rect.x+(self.edge//2),
+                             self.rect.y+(self.edge//2)))
+
             else:
                 screen.blit(self.surface, (self.rect.x, self.rect.y))
 
@@ -472,6 +500,9 @@ class CollisionsManager:
         if isinstance(movingObject, list):
             for mobject in movingObject:
                 self.movingObjectsGroup.append(mobject)
+        elif isinstance(movingObject, EntitiesManager):
+            for mobject in movingObject.getList():
+                self.movingObjectsGroup.append(mobject)
         else:
             self.movingObjectsGroup.append(movingObject)
 
@@ -507,12 +538,19 @@ class Gravity:
         self.collidersGroup = []
         self.collidersFloor = []
 
+    def initFloor(self, floor):
+        self.collidersFloor = []
+        self.collidersFloor.append(floor)
+
     def addFloor(self, floor):
         self.collidersFloor.append(floor)
 
     def addObject(self, obj):
         if isinstance(obj, list):
             for mobj in obj:
+                self.collidersGroup.append(mobj)
+        elif isinstance(obj, EntitiesManager):
+            for mobj in obj.getList():
                 self.collidersGroup.append(mobj)
         else:
             self.collidersGroup.append(obj)
@@ -594,8 +632,12 @@ class Game2D:
     CAPTION = ""
     FILL_COLOR = Color.LIGHTGRAY
     player = None
-    stickToFloor = False
     fps = 20
+    level = 0
+    step = 0
+    startChronoGame = 0
+    startChronoLevel = 0
+    startChronoStep = 0
 
     def __init__(self,
                  caption,
@@ -613,6 +655,24 @@ class Game2D:
         self.CAPTION = caption
         self.FILL_COLOR = fill_color
         self.levels = None
+        self.darken = 200
+        self.stepDarken = -5
+        self.startChronoGame = time.time()
+
+    # Fonction pour assombrir l'écran
+    def darken_screen(self, screen, alpha):
+        overlay = pygame.Surface((self.SCREEN_SIZE[0], self.SCREEN_SIZE[1]))
+        overlay.fill(Color.BLACK)
+        overlay.set_alpha(alpha)
+        screen.blit(overlay, (0, 0))
+
+    def setDarken(self, darken = 200, stepDarken = -5):
+        self.darken = darken
+        self.stepDarken = stepDarken
+
+    def getChronoLevel(self):
+        return int(time.time() - self.startChronoLevel)
+
 
     def myUpdate(self):
         pass
@@ -679,6 +739,12 @@ class Game2D:
         self.screen.blit(camera, (self.camera_x*-1, self.camera_y*-1))
         self.screen.blit(sreen, (0, 0))
 
+        if self.darken > 0:
+            if self.darken > 255 and self.stepDarken > 0 :
+                self.stepDarken *=-1
+            self.darken_screen(self.screen, self.darken)
+            self.darken += self.stepDarken
+
         pygame.display.update()
 
     def myInitialization(self):
@@ -687,8 +753,13 @@ class Game2D:
     def setPlayer(self, player):
         self.player = player
 
-    def loadTiled(self, fileName, path=None):
+    def loadTiled(self, fileName, path=None, level=None):
         self.levels = Levels_2D(fileName, path)
+        if self.levels and self.levels.getCurrentLevel():
+            self.level = self.level + 1 if level is None else level
+            self.startChronoLevel = time.time()
+            self.gravity.initFloor(self.levels.getCurrentLevel().collidersFloor)
+            self.collisionsManager.addCollider(self.levels.getCurrentLevel().collidersGroup)
 
     def run(self):
         # Initialisation du jeu et création de la fenêtre du jeu
@@ -704,10 +775,6 @@ class Game2D:
         running = True
 
         self.myInitialization()
-
-        if self.levels and self.levels.getCurrentLevel():
-            self.gravity.addFloor(self.levels.getCurrentLevel().collidersFloor)
-            self.collisionsManager.addCollider(self.levels.getCurrentLevel().collidersGroup)
 
         while running:
 

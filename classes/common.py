@@ -7,7 +7,7 @@ import os
 import copy
 import math
 
-DEBUG = False
+
 """
 Palette des couleurs
 """
@@ -22,10 +22,15 @@ class Color:
     LIGHTGRAY = (240, 240, 240, 0)
     SHADOW = (50, 50, 50, 20)
     DEFAULT = (255, 255, 255)
-    ALPHA = 255
+    ALPHA = 100
 
     def random():
         return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+class DEBUG:
+    active = False
+    alpha = 100
+    color = Color.RED
 
 class CText:
 
@@ -159,11 +164,20 @@ class Shape(pygame.sprite.Sprite):
 
             if self.animations :
                 self.animations.draw(screen, self.rect.x, self.rect.y, self.guidance)
+                if DEBUG.active:
+                    self.surface.convert_alpha()
+                    self.surface.set_alpha(DEBUG.alpha)
+                    self.surface.fill(DEBUG.color)
+
+                    screen.blit(self.surface,
+                            (self.rect.x+(self.edge//2),
+                             self.rect.y+(self.edge//2)))
             else:
                 screen.blit(self.surface,
                         (self.rect.x+(self.edge//2),
                          self.rect.y+(self.edge//2)))
-            CText.draw(screen, self.rect.x, self.rect.y)
+            if DEBUG.active:
+                CText.draw(screen, self.rect.x, self.rect.y)
 
     def goto(self, x=None, y=None):
         self.rect.x = x if x is not None else self.rect.x
@@ -300,7 +314,7 @@ class Shape(pygame.sprite.Sprite):
                         self.target = None
 
 
-    def getAnimationCurrent(self):
+    def getCurrentAnimation(self):
         if self.animations :
             return self.animations.getCurrentAnimation()
         else:
@@ -319,7 +333,7 @@ class Shape(pygame.sprite.Sprite):
         return math.sqrt((self.rect.x - objet.rect.x)**2 + (self.rect.y - objet.rect.y)**2)
 
 
-    def goToTarget(self, target, velocity = 10):
+    def moveToTarget(self, target, velocity = 10):
         self.target = target
         self.velocity = velocity
 
@@ -338,6 +352,29 @@ class Shape(pygame.sprite.Sprite):
     def toStartAgain(self):
         self.rect.x = self.init_x
         self.rect.y = self.init_y
+
+    def setValidationPoint(self, validationPoint):
+
+        if isinstance(validationPoint, list):
+            self.init_x = validationPoint[0]
+            self.init_y = validationPoint[1]
+        elif isinstance(validationPoint,Shape):
+            self.init_x = validationPoint.getX()
+            self.init_y = validationPoint.getY()
+        if isinstance(validationPoint, tuple):
+            self.init_x = validationPoint[0]
+            self.init_y = validationPoint[1]
+
+    def goToTarget(self, target):
+
+        if isinstance(target, list):
+            self.goto(target[0], target[1])
+
+        elif isinstance(target,Shape):
+            self.goto(target.getX(), target.getY())
+
+        elif isinstance(target, tuple):
+            self.goto(target[0], target[1])
 
 """
 Dessin d'un polygone à plusieurs cotés
@@ -649,8 +686,6 @@ class Chronometer:
                 self.shape.draw(screen)
             self.text.draw(screen, self.getChrono())
 
-    def isAlert(self):
-        pass
 
 """
 Chargement d'images

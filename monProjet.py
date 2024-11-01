@@ -50,10 +50,11 @@ class MyGame(Game2D):
                           "LEFT" : ["SF-course_beton-2.mp3"],
                           "RIGHT" : ["SF-course_beton-2.mp3"]}
 
-        animation = Animation(ANIMATIONS_PLAYER, "images/player", delay=5, soundAnimation = SOUNDS_PLAYER, soundPath = "sounds")
+        animation = Animation(ANIMATIONS_PLAYER, "images/player", (100, 200),  scale=0.5, delay=5, soundAnimation = SOUNDS_PLAYER, soundPath = "sounds")
 
         # Affextation de l'animation au joueur
-        player.loadAnimations(animation, "IDLE", 15, 40)
+        player.loadAnimations(animation, "IDLE", 20, 80)
+
 
         return player
 
@@ -211,17 +212,17 @@ class MyGame(Game2D):
         # générateur de topkens
         #tokens = EntitiesManager(token, 10, 100, 150, Game2D.SIZE[0], Game2D.SIZE[1]-300)
         tokens = EntitiesManager(token, ((120,300),(400,200),(800,100),(1100,210)))
-        tokens.goToTarget([0,100],10)
+        tokens.moveToTarget([0,100],10)
 
 
-        platform01.goToTarget([0,100],5)
+        platform01.moveToTarget([0,100],5)
 
         monster = self.generateMonster()
         monsters = EntitiesManager(monster, 10, 100, 150, Game2D.SIZE[0], Game2D.SIZE[1]-300)
 
         #monsters = EntitiesManager(monster, ((120,550)))
-        monsters.goToTarget(player)
-        #monsters.goToTarget([100,0],10)
+        monsters.moveToTarget(player)
+        #monsters.moveToTarget([100,0],10)
 
         nbrLifes = 0
         # génération de la barre des vies

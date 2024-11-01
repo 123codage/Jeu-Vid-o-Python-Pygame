@@ -25,8 +25,10 @@ class Level_2D:
         for sprite in self.tilesGroup:
             screen.blit(sprite.image, (sprite.rect.x,sprite.rect.y))
 
-        if DEBUG :
+        if DEBUG.active :
             for sprite in self.collidersGroup:
+                screen.blit(sprite.image, (sprite.rect.x,sprite.rect.y))
+            for sprite in self.collidersFloor:
                 screen.blit(sprite.image, (sprite.rect.x,sprite.rect.y))
 
     def getSize(self):

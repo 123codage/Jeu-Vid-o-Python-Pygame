@@ -222,6 +222,7 @@ class Levels_2D:
                         collidersFloor.add(collider)
                     else:
                         collidersGroup.add(collider)
+
             level = Level_2D(fileNameTiled,
                              width,
                              height,
