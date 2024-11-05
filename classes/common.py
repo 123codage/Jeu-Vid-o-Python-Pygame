@@ -349,11 +349,7 @@ class Shape(pygame.sprite.Sprite):
     def getY(self):
         return self.rect.y
 
-    def toStartAgain(self):
-        self.rect.x = self.init_x
-        self.rect.y = self.init_y
-
-    def setValidationPoint(self, validationPoint):
+    def setStartPoint(self, validationPoint):
 
         if isinstance(validationPoint, list):
             self.init_x = validationPoint[0]
@@ -361,9 +357,16 @@ class Shape(pygame.sprite.Sprite):
         elif isinstance(validationPoint,Shape):
             self.init_x = validationPoint.getX()
             self.init_y = validationPoint.getY()
-        if isinstance(validationPoint, tuple):
+        elif isinstance(validationPoint, tuple):
             self.init_x = validationPoint[0]
             self.init_y = validationPoint[1]
+        elif isinstance(validationPoint, int):
+            self.init_x = validationPoint
+            self.init_y = self.rect.y
+
+    def getStartPoint(self):
+
+        return self.init_x, self.init_y
 
     def goToTarget(self, target):
 
@@ -375,6 +378,21 @@ class Shape(pygame.sprite.Sprite):
 
         elif isinstance(target, tuple):
             self.goto(target[0], target[1])
+
+        elif isinstance(target, int):
+            self.goto(target, None)
+
+    def setColor(self, color = Color.WHITE, alpha = 255):
+
+        self.surface.convert_alpha()
+        self.surface.set_alpha(alpha)
+        self.surface.fill(color)
+
+    def getWidth(self):
+        return self.width
+
+    def getHeight(self):
+        return self.height
 
 """
 Dessin d'un polygone à plusieurs cotés
@@ -647,6 +665,7 @@ class Chronometer:
     currentChrono = 0
     startChrono = 0
     delay = 0
+    state = 0
 
     def __init__(self, text=None, shape=None):
         if text :
@@ -654,17 +673,20 @@ class Chronometer:
         else:
             self.text = Text(x=10, y=10)
         self.shape = shape
+        self.delay = 0
 
     def stop(self):
         self.delay = 0
         self.currentChrono = 0
         self.startChrono = 0
+        self.state = 0
 
     def start(self, delay=3):
         if self.startChrono == 0:
             self.startChrono = time.time()
             self.delay = delay
             self.currentChrono = delay
+            self.state = 1
 
     def getChrono(self):
         self.currentChrono = 0
@@ -675,6 +697,7 @@ class Chronometer:
                 self.currentChrono - self.startChrono >= self.delay
             ):  # Conversion en millisecondes
                 self.stop()
+                self.state = 2
         minutes = int((self.delay - (self.currentChrono - self.startChrono)) // 60)
         seconds = int((self.delay - (self.currentChrono - self.startChrono)) % 60)
 
@@ -684,7 +707,16 @@ class Chronometer:
         if self.delay > 0 and self.text:
             if self.shape:
                 self.shape.draw(screen)
-            self.text.draw(screen, self.getChrono())
+            self.text.draw(screen, self.text.text + self.getChrono())
+
+    def getState(self):
+        return self.state
+
+    def isStarted(self):
+        return True if self.state > 0 else False
+
+    def isFinished(self):
+        return True if self.state == 2 else False
 
 
 """

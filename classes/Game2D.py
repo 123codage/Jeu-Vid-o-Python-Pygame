@@ -310,7 +310,8 @@ class Player(Shape):
         y=10,
         width=50,
         height=50,
-        color=Color.DEFAULT
+        color=Color.DEFAULT,
+        nbrLifes = 0
     ):
         super().__init__(x, y, width, height, color)
 
@@ -322,6 +323,7 @@ class Player(Shape):
         self.start_idle = time.time()
         self.threshold_idle = 0.5
         self.all_projectiles = pygame.sprite.Group()
+        self.nbrLifes = nbrLifes
 
     def move(self, guidance):
 
@@ -417,6 +419,15 @@ class Player(Shape):
     def addProjectiles(self, guidance):
         if guidance[0] != 0 or guidance[1] != 0:
             self.all_projectiles.add(Projectile(self.rect.x, self.rect.y, guidance))
+
+    def getNbrLifes(self):
+        return self.nbrLifes
+
+    def lessLifes(self, nbr = 1):
+        self.nbrLifes -= nbr
+
+    def moreLifes(self, nbr = 1):
+        self.nbrLifes += nbr
 
 class Event:
     quit = False
@@ -638,6 +649,8 @@ class Game2D:
     startChronoGame = 0
     startChronoLevel = 0
     startChronoStep = 0
+    init_x = -1
+    init_y = -1
 
     def __init__(self,
                  caption,
@@ -671,8 +684,28 @@ class Game2D:
         self.stepDarken = stepDarken
 
     def getChronoLevel(self):
-        return int(time.time() - self.startChronoLevel)
+        return 0 if self.startChronoLevel ==0 else int(time.time() - self.startChronoLevel)
 
+    def getChronoStep(self):
+        return 0 if self.startChronoStep == 0 else int(time.time() - self.startChronoStep)
+
+    def setValidationStep(self, validationPoint):
+
+        if isinstance(validationPoint, list):
+            self.init_x = validationPoint[0]
+            self.init_y = validationPoint[1]
+        elif isinstance(validationPoint,Shape):
+            self.init_x = validationPoint.getX()
+            self.init_y = validationPoint.getY()
+        elif isinstance(validationPoint, tuple):
+            self.init_x = validationPoint[0]
+            self.init_y = validationPoint[1]
+        elif isinstance(validationPoint, int):
+            self.init_x = validationPoint
+            self.init_y = self.init_y
+
+        self.step += 1
+        self.startChronoStep = time.time()
 
     def myUpdate(self):
         pass
@@ -753,13 +786,25 @@ class Game2D:
     def setPlayer(self, player):
         self.player = player
 
-    def loadTiled(self, fileName, path=None, level=None):
+    def loadTiled(self, fileName, path=None, level= -1, x = -1 , y = -1):
         self.levels = Levels_2D(fileName, path)
         if self.levels and self.levels.getCurrentLevel():
-            self.level = self.level + 1 if level is None else level
+            self.level = self.level + 1 if level < 0 else level
+            self.step = 0
             self.startChronoLevel = time.time()
+            self.startChronoStep = time.time()
             self.gravity.initFloor(self.levels.getCurrentLevel().collidersFloor)
             self.collisionsManager.addCollider(self.levels.getCurrentLevel().collidersGroup)
+
+        if self.player and x > 0 and y > 0:
+            self.init_x = x
+            self.init_y = y
+            self.player.goToTarget([self.init_x, self.init_y])
+
+    def goToStartOfLevel(self):
+        if self.player and self.init_x > 0 and self.init_y > 0:
+            self.player.goToTarget([self.init_x, self.init_y])
+            self.startChronoStep = time.time()
 
     def run(self):
         # Initialisation du jeu et création de la fenêtre du jeu
